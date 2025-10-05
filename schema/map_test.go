@@ -23,3 +23,24 @@ func Test_Map(t *testing.T) {
 	assert.Nil(t, err1)
 	assert.NotNil(t, err2)
 }
+
+func Test_MapChild(t *testing.T) {
+	m := map[string]string{
+		"name": "John Doe",
+		"city": "Tokyo",
+	}
+
+	validStrSchema := String().MaxLength(10)
+	invalidStrSchema := String().MinLength(10)
+
+	validSchema := Map[string, string]().Child(validStrSchema)
+	invalidSchema := Map[string, string]().Child(invalidStrSchema)
+
+	err1 := validSchema.Validate(m)
+	t.Log(err1)
+	err2 := invalidSchema.Validate(m)
+	t.Log(err2)
+
+	assert.Nil(t, err1)
+	assert.NotNil(t, err2)
+}

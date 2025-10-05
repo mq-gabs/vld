@@ -1,6 +1,9 @@
 package schema
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type mapSchema[T comparable, U any] struct {
 	baseSchema[map[T]U]
@@ -37,6 +40,22 @@ func (ms *mapSchema[T, U]) MinLength(min int) *mapSchema[T, U] {
 		}
 
 		return nil
+	})
+
+	return ms
+}
+
+func (ms *mapSchema[T, U]) Child(schema Schema[U]) *mapSchema[T, U] {
+	ms.appendValidator(func(m map[T]U) error {
+		var err error
+		for key, value := range m {
+			schemaErr := schema.Validate(value)
+			if schemaErr != nil {
+				err = errors.Join(err, fmt.Errorf("[%v]: %v", key, schemaErr.Error()))
+			}
+		}
+
+		return err
 	})
 
 	return ms
