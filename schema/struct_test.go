@@ -27,11 +27,11 @@ func Test_Struct(t *testing.T) {
 
 	validSchema := Struct(map[string]Schema[any]{
 		"name": String().MinLength(4).MaxLength(32),
-		"age":  Number().Max(44),
+		"age":  Number[int]().Max(44),
 	})
 	invalidSchema := Struct(map[string]Schema[any]{
 		"name": String().MaxLength(4),
-		"age":  Number().Min(44),
+		"age":  Number[int]().Min(44),
 	})
 
 	err1 := validSchema.Validate(u)
@@ -68,11 +68,11 @@ func Test_StructInsideStruct(t *testing.T) {
 
 	validUserSchema := Struct(map[string]Schema[any]{
 		"name": String().MaxLength(32),
-		"age":  Number().Min(18),
+		"age":  Number[int]().Min(18),
 	})
 	invalidUserSchema := Struct(map[string]Schema[any]{
 		"name": String().MinLength(32),
-		"age":  Number().Max(21),
+		"age":  Number[int]().Max(21),
 	})
 
 	validSchema := Struct(map[string]Schema[any]{

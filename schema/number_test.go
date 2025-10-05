@@ -9,8 +9,8 @@ import (
 func Test_Number(t *testing.T) {
 	n := 10
 
-	validSchema := Number().Max(10).NonZero()
-	invalidSchema := Number().NonZero().Negative()
+	validSchema := Number[int]().Max(10).NonZero()
+	invalidSchema := Number[int]().NonZero().Negative()
 
 	err1 := validSchema.Validate(n)
 	t.Log(err1)
