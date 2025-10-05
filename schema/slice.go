@@ -15,8 +15,10 @@ func Slice[T comparable]() *sliceSchema[T] {
 	}
 }
 
-func (ss *sliceSchema[T]) Custom(fn Validator[[]T]) {
+func (ss *sliceSchema[T]) Custom(fn Validator[[]T]) *sliceSchema[T] {
 	ss.appendValidator(fn)
+
+	return ss
 }
 
 func (ss *sliceSchema[T]) MinLength(minLen int) *sliceSchema[T] {

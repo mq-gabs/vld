@@ -21,8 +21,10 @@ func Number[T NumberType]() *numberSchema[T] {
 	}
 }
 
-func (ns *numberSchema[T]) Custom(fn Validator[T]) {
+func (ns *numberSchema[T]) Custom(fn Validator[T]) *numberSchema[T] {
 	ns.appendValidator(fn)
+
+	return ns
 }
 
 func (ns *numberSchema[T]) Min(min T) *numberSchema[T] {
