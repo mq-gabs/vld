@@ -20,3 +20,18 @@ func Test_String(t *testing.T) {
 	assert.Nil(t, err1)
 	assert.NotNil(t, err2)
 }
+
+func Test_StringEnum(t *testing.T) {
+	status := "PENDING"
+
+	validSchema := String().Enum([]string{"PENDING", "DONE", "IN_PROGRESS"})
+	invalidSchema := String().Enum([]string{"DONE", "CANCELLED"})
+
+	err1 := validSchema.Validate(status)
+	t.Log(err1)
+	err2 := invalidSchema.Validate(status)
+	t.Log(err2)
+
+	assert.Nil(t, err1)
+	assert.NotNil(t, err2)
+}

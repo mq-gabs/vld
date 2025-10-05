@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"slices"
 )
 
 var (
@@ -80,6 +81,26 @@ func (ss *stringSchema) URL() *stringSchema {
 	ss.appendValidator(func(s string) error {
 		if !regexURL.MatchString(s) {
 			return errors.New("must be valid URL")
+		}
+
+		return nil
+	})
+
+	return ss
+}
+
+func (ss *stringSchema) Enum(enum []string) *stringSchema {
+	if len(enum) == 0 {
+		ss.appendValidator(func(s string) error {
+			return errors.New("invalid setting, enum must not be empty")
+		})
+
+		return ss
+	}
+
+	ss.appendValidator(func(s string) error {
+		if !slices.Contains(enum, s) {
+			return fmt.Errorf("must be one of %v", enum)
 		}
 
 		return nil
