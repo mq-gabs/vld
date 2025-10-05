@@ -5,20 +5,24 @@ import (
 	"fmt"
 )
 
-type structSchema struct {
-	baseSchema[any]
+type SchemaStructType interface {
+	SchemaJSON() map[string]any
+}
+
+type structSchema[T SchemaStructType] struct {
+	baseSchema[T]
 	schemas map[string]Schema[any]
 }
 
-func Struct(fields map[string]Schema[any]) *structSchema {
-	return &structSchema{
-		baseSchema: newBaseSchema[any](),
+func Struct[T SchemaStructType](fields map[string]Schema[any]) *structSchema[T] {
+	return &structSchema[T]{
+		baseSchema: newBaseSchema[T](),
 		schemas:    fields,
 	}
 }
 
-func (ss *structSchema) Validate(structValue any) error {
-	structValueTyped, ok := structValue.(SchemaJSONMarshaler)
+func (ss *structSchema[T]) Validate(structValue any) error {
+	structValueTyped, ok := structValue.(SchemaStructType)
 	if !ok {
 		return errors.New("struct must implement SchemaJSON")
 	}
