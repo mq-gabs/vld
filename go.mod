@@ -1,4 +1,4 @@
-module xx
+module github.com/mq-gabs/go-validation
 
 go 1.23.3
 
