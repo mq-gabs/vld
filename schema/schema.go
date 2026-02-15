@@ -29,7 +29,7 @@ func (bs *baseSchema[T]) Validate(value any) error {
 	}
 
 	if len(bs.validators) == 0 {
-		initialValidate()
+		return initialValidate()
 	}
 
 	var err error

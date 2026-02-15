@@ -14,11 +14,17 @@ type structSchema[T SchemaStructType] struct {
 	schemas map[string]Schema[any]
 }
 
-func Struct[T SchemaStructType](fields map[string]Schema[any]) *structSchema[T] {
+func Struct[T SchemaStructType]() *structSchema[T] {
 	return &structSchema[T]{
 		baseSchema: newBaseSchema[T](),
-		schemas:    fields,
+		schemas:    make(map[string]Schema[any]),
 	}
+}
+
+func (ss *structSchema[T]) Field(key string, schema Schema[any]) *structSchema[T] {
+	ss.schemas[key] = schema
+
+	return ss
 }
 
 func (ss *structSchema[T]) Validate(structValue any) error {
