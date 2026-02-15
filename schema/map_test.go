@@ -12,8 +12,8 @@ func Test_Map(t *testing.T) {
 		"city": "London",
 	}
 
-	validSchema := Map[string, string]().MaxLength(10)
-	invalidSchema := Map[string, string]().MinLength(10)
+	validSchema := Map[string, string]().LengthMax(10)
+	invalidSchema := Map[string, string]().LengthMin(10)
 
 	err1 := validSchema.Validate(m)
 	t.Log(err1)
@@ -30,8 +30,8 @@ func Test_MapChild(t *testing.T) {
 		"city": "Tokyo",
 	}
 
-	validStrSchema := String().MaxLength(10)
-	invalidStrSchema := String().MinLength(10)
+	validStrSchema := String().LengthMax(10)
+	invalidStrSchema := String().LengthMin(10)
 
 	validSchema := Map[string, string]().Child(validStrSchema)
 	invalidSchema := Map[string, string]().Child(invalidStrSchema)

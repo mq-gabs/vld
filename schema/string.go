@@ -29,7 +29,7 @@ func (ss *stringSchema) Custom(fn Validator[string]) *stringSchema {
 	return ss
 }
 
-func (ss *stringSchema) MinLength(minSize int) *stringSchema {
+func (ss *stringSchema) LengthMin(minSize int) *stringSchema {
 	ss.appendValidator(func(value string) error {
 		if len(value) < minSize {
 			return fmt.Errorf("required min length: %v", minSize)
@@ -41,7 +41,7 @@ func (ss *stringSchema) MinLength(minSize int) *stringSchema {
 	return ss
 }
 
-func (ss *stringSchema) MaxLength(maxSize int) *stringSchema {
+func (ss *stringSchema) LengthMax(maxSize int) *stringSchema {
 	ss.appendValidator(func(value string) error {
 		if len(value) > maxSize {
 			return fmt.Errorf("required max length: %v", maxSize)

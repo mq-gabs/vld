@@ -9,8 +9,8 @@ import (
 func Test_String(t *testing.T) {
 	name := "John"
 
-	validSchema := String().MinLength(2).MaxLength(8)
-	invalidSchema := String().MinLength(5).MaxLength(8)
+	validSchema := String().LengthMin(2).LengthMax(8)
+	invalidSchema := String().LengthMin(5).LengthMax(8)
 
 	err1 := validSchema.Validate(name)
 	t.Log(err1)

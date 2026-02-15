@@ -21,7 +21,7 @@ func (ms *mapSchema[T, U]) Custom(fn Validator[map[T]U]) *mapSchema[T, U] {
 	return ms
 }
 
-func (ms *mapSchema[T, U]) MaxLength(max int) *mapSchema[T, U] {
+func (ms *mapSchema[T, U]) LengthMax(max int) *mapSchema[T, U] {
 	ms.appendValidator(func(m map[T]U) error {
 		if len(m) > max {
 			return fmt.Errorf("required max length: %v", max)
@@ -33,7 +33,7 @@ func (ms *mapSchema[T, U]) MaxLength(max int) *mapSchema[T, U] {
 	return ms
 }
 
-func (ms *mapSchema[T, U]) MinLength(min int) *mapSchema[T, U] {
+func (ms *mapSchema[T, U]) LengthMin(min int) *mapSchema[T, U] {
 	ms.appendValidator(func(m map[T]U) error {
 		if len(m) < min {
 			return fmt.Errorf("required min length: %v", min)

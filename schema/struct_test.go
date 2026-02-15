@@ -26,10 +26,10 @@ func Test_Struct(t *testing.T) {
 	}
 
 	validSchema := Struct[User]().
-		Field("name", String().MinLength(4).MaxLength(32)).
+		Field("name", String().LengthMin(4).LengthMax(32)).
 		Field("age", Number[int]().Max(44))
 	invalidSchema := Struct[User]().
-		Field("name", String().MaxLength(4)).
+		Field("name", String().LengthMax(4)).
 		Field("age", Number[int]().Min(44))
 
 	err1 := validSchema.Validate(u)
@@ -65,18 +65,18 @@ func Test_StructInsideStruct(t *testing.T) {
 	}
 
 	validUserSchema := Struct[User]().
-		Field("name", String().MaxLength(32)).
+		Field("name", String().LengthMax(32)).
 		Field("age", Number[int]().Min(18))
 
 	invalidUserSchema := Struct[User]().
-		Field("name", String().MinLength(32)).
+		Field("name", String().LengthMin(32)).
 		Field("age", Number[int]().Max(21))
 
 	validSchema := Struct[Group]().
-		Field("name", String().MaxLength(12)).
+		Field("name", String().LengthMax(12)).
 		Field("member", validUserSchema)
 	invalidSchema := Struct[Group]().
-		Field("name", String().MaxLength(4)).
+		Field("name", String().LengthMax(4)).
 		Field("member", invalidUserSchema)
 
 	err1 := validSchema.Validate(g)
