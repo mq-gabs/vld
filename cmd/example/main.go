@@ -37,7 +37,7 @@ func main() {
 	userProductsSchema := schema.Slice[string]().LengthMin(1).LengthMax(5).Custom(func(s []string) error {
 		var err error
 		for _, v := range s {
-			if e := productSchema.Validate(v); err != nil {
+			if e := productSchema.Validate(v); e != nil {
 				return errors.Join(err, e)
 			}
 		}

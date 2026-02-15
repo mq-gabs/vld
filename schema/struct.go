@@ -1,50 +1,31 @@
 package schema
 
-import (
-	"errors"
-	"fmt"
-)
+import "errors"
 
-type SchemaStructType interface {
-	SchemaJSON() map[string]any
-}
-
-type SchemaStruct[T SchemaStructType] struct {
+type SchemaStruct[T any] struct {
 	baseSchema[T]
-	schemas map[string]Schema[any]
+	tupleSet TupleSet[T]
 }
 
-func Struct[T SchemaStructType]() *SchemaStruct[T] {
+func Struct[T any](fn TupleSet[T]) *SchemaStruct[T] {
 	return &SchemaStruct[T]{
 		baseSchema: newBaseSchema[T](),
-		schemas:    make(map[string]Schema[any]),
+		tupleSet:   fn,
 	}
 }
 
-func (ss *SchemaStruct[T]) Field(key string, schema Schema[any]) *SchemaStruct[T] {
-	ss.schemas[key] = schema
-
-	return ss
-}
-
-func (ss *SchemaStruct[T]) Validate(structValue any) error {
-	structValueTyped, ok := structValue.(SchemaStructType)
+func (ss *SchemaStruct[T]) Validate(v any) error {
+	typedV, ok := v.(*T)
 	if !ok {
-		return errors.New("struct must implement SchemaJSON")
+		return errors.New("invalid type")
 	}
 
-	json := structValueTyped.SchemaJSON()
+	tuples := ss.tupleSet(typedV)
 
 	var err error
-	for key, value := range json {
-		schema, ok := ss.schemas[key]
-		if !ok {
-			return fmt.Errorf("no schema set for field: %v", key)
-		}
-
-		schemaErr := schema.Validate(value)
-		if schemaErr != nil {
-			err = errors.Join(err, fmt.Errorf("[%v]: %v", key, schemaErr.Error()))
+	for _, t := range tuples {
+		if e := t.Validate(); e != nil {
+			errors.Join(err, e)
 		}
 	}
 
