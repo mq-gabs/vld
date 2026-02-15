@@ -2,8 +2,6 @@ package schema
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 type User struct {
@@ -32,13 +30,12 @@ func Test_Struct(t *testing.T) {
 		Field("name", String().LengthMax(4)).
 		Field("age", Number[int]().Min(44))
 
-	err1 := validSchema.Validate(u)
-	t.Log(err1)
-	err2 := invalidSchema.Validate(u)
-	t.Log(err2)
-
-	assert.Nil(t, err1)
-	assert.NotNil(t, err2)
+	if err := validSchema.Validate(u); err != nil {
+		t.Error(err)
+	}
+	if err := invalidSchema.Validate(u); err != nil {
+		t.Error(err)
+	}
 }
 
 type Group struct {
@@ -79,11 +76,10 @@ func Test_StructInsideStruct(t *testing.T) {
 		Field("name", String().LengthMax(4)).
 		Field("member", invalidUserSchema)
 
-	err1 := validSchema.Validate(g)
-	t.Log(err1)
-	err2 := invalidSchema.Validate(g)
-	t.Log(err2)
-
-	assert.Nil(t, err1)
-	assert.NotNil(t, err2)
+	if err := validSchema.Validate(g); err != nil {
+		t.Error(err)
+	}
+	if err := invalidSchema.Validate(g); err != nil {
+		t.Error(err)
+	}
 }

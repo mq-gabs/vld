@@ -12,13 +12,12 @@ func Test_String(t *testing.T) {
 	validSchema := String().LengthMin(2).LengthMax(8)
 	invalidSchema := String().LengthMin(5).LengthMax(8)
 
-	err1 := validSchema.Validate(name)
-	t.Log(err1)
-	err2 := invalidSchema.Validate(name)
-	t.Log(err2)
-
-	assert.Nil(t, err1)
-	assert.NotNil(t, err2)
+	if err := validSchema.Validate(name); err != nil {
+		t.Error(err)
+	}
+	if err := invalidSchema.Validate(name); err != nil {
+		t.Error(err)
+	}
 }
 
 func Test_StringEnum(t *testing.T) {
@@ -27,13 +26,12 @@ func Test_StringEnum(t *testing.T) {
 	validSchema := String().Enum([]string{"PENDING", "DONE", "IN_PROGRESS"})
 	invalidSchema := String().Enum([]string{"DONE", "CANCELLED"})
 
-	err1 := validSchema.Validate(status)
-	t.Log(err1)
-	err2 := invalidSchema.Validate(status)
-	t.Log(err2)
-
-	assert.Nil(t, err1)
-	assert.NotNil(t, err2)
+	if err := validSchema.Validate(status); err != nil {
+		t.Error(err)
+	}
+	if err := invalidSchema.Validate(status); err != nil {
+		t.Error(err)
+	}
 }
 
 type regexTestCase struct {

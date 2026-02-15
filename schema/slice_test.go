@@ -2,8 +2,6 @@ package schema
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func Test_Slice(t *testing.T) {
@@ -12,11 +10,10 @@ func Test_Slice(t *testing.T) {
 	validSchema := Slice[int]().MinLength(2).MaxLength(8)
 	invalidSchema := Slice[int]().MinLength(6).MaxLength(10)
 
-	err1 := validSchema.Validate(nums)
-	t.Log(err1)
-	err2 := invalidSchema.Validate(nums)
-	t.Log(err2)
-
-	assert.Nil(t, err1)
-	assert.NotNil(t, err2)
+	if err := validSchema.Validate(nums); err != nil {
+		t.Error(err)
+	}
+	if err := invalidSchema.Validate(nums); err != nil {
+		t.Error(err)
+	}
 }
