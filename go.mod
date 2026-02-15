@@ -1,4 +1,4 @@
-module github.com/mq-gabs/go-validation
+module github.com/mq-gabs/dilav
 
 go 1.23.3
 
