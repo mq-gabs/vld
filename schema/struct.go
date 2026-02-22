@@ -20,10 +20,12 @@ func (ss *SchemaStruct[T]) Validate(v any) error {
 		return errors.New("invalid type")
 	}
 
-	tuples := ss.tupleSet(typedV)
+	b := newTupleBuilder()
+
+	ss.tupleSet(b, typedV)
 
 	var err error
-	for _, t := range tuples {
+	for _, t := range b.tuples {
 		if e := t.Validate(); e != nil {
 			errors.Join(err, e)
 		}

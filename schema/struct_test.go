@@ -16,23 +16,19 @@ func Test_Struct(t *testing.T) {
 		age:  33,
 	}
 
-	validSchema := Struct[User](func(u *User) []Tuple[any] {
-		return []Tuple[any]{
-			T(u.name, String().LengthMin(4).LengthMax(32)),
-			T(u.age, Number[int]().Max(44)),
-		}
+	validSchema := Struct(func(b Builder, u *User) {
+		b.F(u.name, String().LengthMin(4).LengthMax(32))
+		b.F(u.age, Number[int]().Max(44))
 	})
-	invalidSchema := Struct[User](func(u *User) []Tuple[any] {
-		return []Tuple[any]{
-			T(u.name, String().LengthMax(4)),
-			T(u.age, Number[int]().Min(44)),
-		}
+	invalidSchema := Struct(func(b Builder, u *User) {
+		b.F(u.name, String().LengthMax(4))
+		b.F(u.age, Number[int]().Min(44))
 	})
 
-	if err := validSchema.Validate(u); err != nil {
+	if err := validSchema.Validate(&u); err != nil {
 		t.Error(err)
 	}
-	if err := invalidSchema.Validate(u); err == nil {
+	if err := invalidSchema.Validate(&u); err == nil {
 		t.Error(errExpectedError)
 	}
 }
@@ -53,38 +49,30 @@ func Test_StructInsideStruct(t *testing.T) {
 		member: &u,
 	}
 
-	validUserSchema := Struct[User](func(u *User) []Tuple[any] {
-		return []Tuple[any]{
-			T(u.name, String().LengthMax(32)),
-			T(u.age, Number[int]().Min(18)),
-		}
+	validUserSchema := Struct(func(b Builder, u *User) {
+		b.F(u.name, String().LengthMax(32))
+		b.F(u.age, Number[int]().Min(18))
 	})
 
-	invalidUserSchema := Struct[User](func(u *User) []Tuple[any] {
-		return []Tuple[any]{
-			T(u.name, String().LengthMin(32)),
-			T(u.age, Number[int]().Max(21)),
-		}
+	invalidUserSchema := Struct(func(b Builder, u *User) {
+		b.F(u.name, String().LengthMin(32))
+		b.F(u.age, Number[int]().Max(21))
 	})
 
-	validSchema := Struct[Group](func(g *Group) []Tuple[any] {
-		return []Tuple[any]{
-			T(g.name, String().LengthMax(12)),
-			T(g.member, validUserSchema),
-		}
+	validSchema := Struct(func(b Builder, g *Group) {
+		b.F(g.name, String().LengthMax(12))
+		b.F(g.member, validUserSchema)
 	})
 
-	invalidSchema := Struct[Group](func(g *Group) []Tuple[any] {
-		return []Tuple[any]{
-			T(g.name, String().LengthMax(4)),
-			T(g.member, invalidUserSchema),
-		}
+	invalidSchema := Struct(func(b Builder, g *Group) {
+		b.F(g.name, String().LengthMax(4))
+		b.F(g.member, invalidUserSchema)
 	})
 
-	if err := validSchema.Validate(g); err != nil {
+	if err := validSchema.Validate(&g); err != nil {
 		t.Error(err)
 	}
-	if err := invalidSchema.Validate(g); err == nil {
+	if err := invalidSchema.Validate(&g); err == nil {
 		t.Error(errExpectedError)
 	}
 }

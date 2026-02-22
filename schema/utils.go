@@ -2,7 +2,7 @@ package schema
 
 import "errors"
 
-type TupleSet[T any] func(*T) []Tuple[any]
+type TupleSet[T any] func(Builder, *T)
 
 type Tuple[T any] struct {
 	fields []T
@@ -20,10 +20,26 @@ func (t Tuple[T]) Validate() error {
 	return err
 }
 
-func T(f any, s Schema[any]) Tuple[any] {
-	return Tuple[any]{fields: []any{f}, schema: s}
+type tupleBuilder struct {
+	tuples []Tuple[any]
 }
 
-func M(f []any, s Schema[any]) Tuple[any] {
-	return Tuple[any]{fields: f, schema: s}
+func newTupleBuilder() *tupleBuilder {
+	return &tupleBuilder{}
+}
+
+type Builder interface {
+	F(f any, s Schema[any])
+	Fs(f []any, s Schema[any])
+}
+
+func (b *tupleBuilder) F(f any, s Schema[any]) {
+	b.tuples = append(b.tuples, Tuple[any]{
+		fields: []any{f},
+		schema: s,
+	})
+}
+
+func (b *tupleBuilder) Fs(f []any, s Schema[any]) {
+	b.tuples = append(b.tuples, Tuple[any]{f, s})
 }

@@ -45,13 +45,14 @@ func main() {
 		return err
 	})
 
-	userSchema := schema.Struct[User]().
-		Field("id", idSchema).
-		Field("name", nameSchema).
-		Field("email", emailSchema).
-		Field("password", passwordSchema).
-		Field("personalPage", personalPageSchema).
-		Field("products", userProductsSchema)
+	userSchema := schema.Struct(func(b schema.Builder, u *User) {
+		b.F(u.ID, idSchema)
+		b.F(u.Name, nameSchema)
+		b.F(u.Email, emailSchema)
+		b.F(u.Password, passwordSchema)
+		b.F(u.PersonalPage, personalPageSchema)
+		b.F(u.Products, userProductsSchema)
+	})
 
 	validUser := User{
 		ID:           1,
