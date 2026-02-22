@@ -1,6 +1,8 @@
 package schema
 
-import "errors"
+import (
+	"errors"
+)
 
 type SchemaStruct[T any] struct {
 	baseSchema[T]
@@ -27,7 +29,7 @@ func (ss *SchemaStruct[T]) Validate(v any) error {
 	var err error
 	for _, t := range b.tuples {
 		if e := t.Validate(); e != nil {
-			errors.Join(err, e)
+			err = errors.Join(err, e)
 		}
 	}
 

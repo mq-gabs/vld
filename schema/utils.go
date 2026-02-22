@@ -1,6 +1,8 @@
 package schema
 
-import "errors"
+import (
+	"errors"
+)
 
 type TupleSet[T any] func(Builder, *T)
 
@@ -13,7 +15,7 @@ func (t Tuple[T]) Validate() error {
 	var err error
 	for _, f := range t.fields {
 		if e := t.schema.Validate(f); e != nil {
-			errors.Join(err, e)
+			err = errors.Join(err, e)
 		}
 	}
 
