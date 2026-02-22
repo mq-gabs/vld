@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mq-gabs/dilav/schema"
+	"github.com/mq-gabs/vld/schema"
 )
 
 type User struct {

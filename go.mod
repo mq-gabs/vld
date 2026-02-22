@@ -1,4 +1,4 @@
-module github.com/mq-gabs/dilav
+module github.com/mq-gabs/vld
 
 go 1.23.3
 
