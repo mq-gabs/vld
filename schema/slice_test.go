@@ -13,7 +13,7 @@ func Test_Slice(t *testing.T) {
 	if err := validSchema.Validate(nums); err != nil {
 		t.Error(err)
 	}
-	if err := invalidSchema.Validate(nums); err != nil {
-		t.Error(err)
+	if err := invalidSchema.Validate(nums); err == nil {
+		t.Error(errExpectedError)
 	}
 }

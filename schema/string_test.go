@@ -15,8 +15,8 @@ func Test_String(t *testing.T) {
 	if err := validSchema.Validate(name); err != nil {
 		t.Error(err)
 	}
-	if err := invalidSchema.Validate(name); err != nil {
-		t.Error(err)
+	if err := invalidSchema.Validate(name); err == nil {
+		t.Error(errExpectedError)
 	}
 }
 
@@ -29,8 +29,8 @@ func Test_StringEnum(t *testing.T) {
 	if err := validSchema.Validate(status); err != nil {
 		t.Error(err)
 	}
-	if err := invalidSchema.Validate(status); err != nil {
-		t.Error(err)
+	if err := invalidSchema.Validate(status); err == nil {
+		t.Error(errExpectedError)
 	}
 }
 

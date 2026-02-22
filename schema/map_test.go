@@ -16,8 +16,8 @@ func Test_Map(t *testing.T) {
 	if err := validSchema.Validate(m); err != nil {
 		t.Error(err)
 	}
-	if err := invalidSchema.Validate(m); err != nil {
-		t.Error(err)
+	if err := invalidSchema.Validate(m); err == nil {
+		t.Error(errExpectedError)
 	}
 }
 
@@ -36,7 +36,7 @@ func Test_MapChild(t *testing.T) {
 	if err := validSchema.Validate(m); err != nil {
 		t.Error(err)
 	}
-	if err := invalidSchema.Validate(m); err != nil {
-		t.Error(err)
+	if err := invalidSchema.Validate(m); err == nil {
+		t.Error(errExpectedError)
 	}
 }

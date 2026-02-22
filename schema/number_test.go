@@ -13,7 +13,7 @@ func Test_Number(t *testing.T) {
 	if err := validSchema.Validate(n); err != nil {
 		t.Error(err)
 	}
-	if err := invalidSchema.Validate(n); err != nil {
-		t.Error(err)
+	if err := invalidSchema.Validate(n); err == nil {
+		t.Error(errExpectedError)
 	}
 }

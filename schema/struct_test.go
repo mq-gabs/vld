@@ -32,8 +32,8 @@ func Test_Struct(t *testing.T) {
 	if err := validSchema.Validate(u); err != nil {
 		t.Error(err)
 	}
-	if err := invalidSchema.Validate(u); err != nil {
-		t.Error(err)
+	if err := invalidSchema.Validate(u); err == nil {
+		t.Error(errExpectedError)
 	}
 }
 
@@ -84,7 +84,7 @@ func Test_StructInsideStruct(t *testing.T) {
 	if err := validSchema.Validate(g); err != nil {
 		t.Error(err)
 	}
-	if err := invalidSchema.Validate(g); err != nil {
-		t.Error(err)
+	if err := invalidSchema.Validate(g); err == nil {
+		t.Error(errExpectedError)
 	}
 }
