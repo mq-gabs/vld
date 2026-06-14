@@ -16,8 +16,9 @@ type ConfigMap[K comparable, V any] struct {
 
 	NonEmpty bool
 
-	// NEW: external value validator (composed from string/number/etc)
 	ValueValidator validate.Validator[V]
+
+	Custom validate.Validate[map[K]V]
 }
 
 type mapValidator[K comparable, V any] struct {
@@ -35,12 +36,10 @@ func (mv *mapValidator[K, V]) append(v validate.Validate[map[K]V]) {
 func (mv *mapValidator[K, V]) Validate(m map[K]V) error {
 	var err error
 
-	// 1. structure validations
 	for _, validation := range mv.validations {
 		err = errors.Join(err, validation(m))
 	}
 
-	// 2. value validations (delegated)
 	if mv.valueValidator != nil {
 		for _, v := range m {
 			if e := mv.valueValidator.Validate(v); e != nil {
@@ -52,7 +51,7 @@ func (mv *mapValidator[K, V]) Validate(m map[K]V) error {
 	return err
 }
 
-func (c *ConfigMap[K, V]) Build() validate.Validator[map[K]V] {
+func (c ConfigMap[K, V]) Build() validate.Validator[map[K]V] {
 	mv := &mapValidator[K, V]{
 		valueValidator: c.ValueValidator,
 	}
@@ -75,6 +74,10 @@ func (c *ConfigMap[K, V]) Build() validate.Validator[map[K]V] {
 
 	if c.NonEmpty {
 		mv.append(buildNonEmptyMap[K, V]())
+	}
+
+	if c.Custom != nil {
+		mv.append(c.Custom)
 	}
 
 	return mv

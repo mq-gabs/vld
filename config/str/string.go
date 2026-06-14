@@ -27,6 +27,8 @@ type ConfigString struct {
 	Email bool
 	URL   bool
 	UUID  bool
+
+	Custom validate.Validate[string]
 }
 
 type stringValidator struct {
@@ -48,7 +50,7 @@ func (sv *stringValidator) Validate(v string) error {
 	return err
 }
 
-func (c *ConfigString) Build() validate.Validator[string] {
+func (c ConfigString) Build() validate.Validator[string] {
 	sv := &stringValidator{}
 
 	if c.MinLen.IsSet() {
@@ -105,6 +107,10 @@ func (c *ConfigString) Build() validate.Validator[string] {
 
 	if c.UUID {
 		sv.append(buildUUID())
+	}
+
+	if c.Custom != nil {
+		sv.append(c.Custom)
 	}
 
 	return sv

@@ -1,6 +1,7 @@
 package number
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/mq-gabs/vld/config/utils"
@@ -338,5 +339,32 @@ func TestEmptyConfig(t *testing.T) {
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestCustomValidation(t *testing.T) {
+	cfg := ConfigNumber[int]{
+		Custom: func(i int) error {
+			if i == 37 {
+				return errors.New("cannot be 37")
+			}
+
+			return nil
+		},
+	}.Build()
+
+	err := cfg.Validate(3)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	err = cfg.Validate(36)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	err = cfg.Validate(37)
+	if err == nil {
+		t.Fatal("expected error")
 	}
 }

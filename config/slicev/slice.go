@@ -14,6 +14,8 @@ type ConfigSlice[T any] struct {
 	NonEmpty bool
 
 	ValueValidator validate.Validator[T]
+
+	Custom validate.Validate[[]T]
 }
 
 type sliceValidator[T any] struct {
@@ -44,7 +46,7 @@ func (sv *sliceValidator[T]) Validate(s []T) error {
 	return err
 }
 
-func (c *ConfigSlice[T]) Build() validate.Validator[[]T] {
+func (c ConfigSlice[T]) Build() validate.Validator[[]T] {
 	sv := &sliceValidator[T]{
 		valueValidator: c.ValueValidator,
 	}
@@ -59,6 +61,10 @@ func (c *ConfigSlice[T]) Build() validate.Validator[[]T] {
 
 	if c.NonEmpty {
 		sv.append(buildSliceNonEmpty[T]())
+	}
+
+	if c.Custom != nil {
+		sv.append(c.Custom)
 	}
 
 	return sv

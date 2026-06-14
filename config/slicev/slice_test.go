@@ -1,6 +1,7 @@
 package slicev
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/mq-gabs/vld/config/str"
@@ -210,5 +211,41 @@ func TestEmptySliceConfig(t *testing.T) {
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestCustomValdiation(t *testing.T) {
+	cfg := ConfigSlice[string]{
+		Custom: func(s []string) error {
+			if len(s) == 3 {
+				return errors.New("length cannot be 3")
+			}
+
+			if len(s) > 0 && s[0] == "2" {
+				return errors.New("first element cannot be 2")
+			}
+
+			return nil
+		},
+	}.Build()
+
+	err := cfg.Validate([]string{"a", "b"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	err = cfg.Validate([]string{"a", "b", "c", "d"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	err = cfg.Validate([]string{"a", "b", "c"})
+	if err == nil {
+		t.Fatal("expected error")
+	}
+
+	err = cfg.Validate([]string{"2", "b"})
+	if err == nil {
+		t.Fatal("expected error")
 	}
 }

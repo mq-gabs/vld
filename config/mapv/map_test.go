@@ -1,6 +1,7 @@
 package mapv
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/mq-gabs/vld/config/str"
@@ -272,5 +273,53 @@ func TestEmptyConfigMap(t *testing.T) {
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestCustomValidation(t *testing.T) {
+	cfg := ConfigMap[string, int]{
+		Custom: func(m map[string]int) error {
+			if len(m) == 2 {
+				return errors.New("length cannot be 2")
+			}
+
+			if _, ok := m["invalid"]; ok {
+				return errors.New("invalid key cannot exists")
+			}
+
+			return nil
+		},
+	}.Build()
+
+	err := cfg.Validate(map[string]int{
+		"age": 18,
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	err = cfg.Validate(map[string]int{
+		"day":   18,
+		"month": 1,
+		"year":  2000,
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	err = cfg.Validate(map[string]int{
+		"day":   18,
+		"month": 1,
+	})
+	if err == nil {
+		t.Fatal("expected error")
+	}
+
+	err = cfg.Validate(map[string]int{
+		"invalid": 18,
+		"month":   1,
+	})
+	if err == nil {
+		t.Fatal("expected error")
 	}
 }

@@ -2,7 +2,6 @@ package number
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/mq-gabs/vld/config/utils"
 	"github.com/mq-gabs/vld/config/validate"
@@ -25,6 +24,8 @@ type ConfigNumber[T typeNumber] struct {
 
 	Even bool
 	Odd  bool
+
+	Custom validate.Validate[T]
 }
 
 type numberValidator[T typeNumber] struct {
@@ -48,7 +49,7 @@ func (nv *numberValidator[T]) Validate(v T) error {
 	return err
 }
 
-func (cn *ConfigNumber[T]) Build() validate.Validator[T] {
+func (cn ConfigNumber[T]) Build() validate.Validator[T] {
 	nv := &numberValidator[T]{}
 
 	if cn.Max.IsSet() {
@@ -107,13 +108,15 @@ func (cn *ConfigNumber[T]) Build() validate.Validator[T] {
 		nv.append(buildOdd[T]())
 	}
 
+	if cn.Custom != nil {
+		nv.append(cn.Custom)
+	}
+
 	return nv
 }
 
 func buildMax[T typeNumber](v T) validate.Validate[T] {
-	fmt.Printf("bilding max, v: %v\n", v)
 	return func(t T) error {
-		fmt.Printf("calling max: t: %v, v %v\n", t, v)
 		if t > v {
 			return errors.New("greater than max value")
 		}

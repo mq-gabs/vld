@@ -1,6 +1,7 @@
 package str
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/mq-gabs/vld/config/utils"
@@ -275,5 +276,32 @@ func TestEmptyStringConfig(t *testing.T) {
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestCustomValidation(t *testing.T) {
+	cfg := ConfigString{
+		Custom: func(s string) error {
+			if s == "invalid" {
+				return errors.New("string is invalid")
+			}
+
+			return nil
+		},
+	}.Build()
+
+	err := cfg.Validate("any")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	err = cfg.Validate("something else")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	err = cfg.Validate("invalid")
+	if err == nil {
+		t.Fatal("expected error")
 	}
 }
