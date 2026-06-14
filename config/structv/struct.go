@@ -13,8 +13,8 @@ type Pair struct {
 
 func NewPair[T any](
 	name string,
-	value T,
-	validator validate.Validator[T],
+	value *T,
+	validator validate.Validator[*T],
 ) Pair {
 	return Pair{
 		validate: func() error {
@@ -30,12 +30,15 @@ func NewPair[T any](
 type ConfigStruct[T any] struct {
 	Nullable bool
 
-	Validate func(T) []Pair
+	Validate func(*T) []Pair
+
+	Custom validate.Validate[*T]
 }
 
 type structValidator[T any] struct {
 	nullable bool
-	validate func(T) []Pair
+	custom   validate.Validate[*T]
+	validate func(*T) []Pair
 }
 
 func (sv *structValidator[T]) Validate(v *T) error {
@@ -49,20 +52,27 @@ func (sv *structValidator[T]) Validate(v *T) error {
 
 	var err error
 
-	for _, pair := range sv.validate(*v) {
-		if pair.validate == nil {
-			continue
-		}
+	if sv.custom != nil {
+		err = errors.Join(err, sv.custom(v))
+	}
 
-		err = errors.Join(err, pair.validate())
+	if sv.validate != nil {
+		for _, pair := range sv.validate(v) {
+			if pair.validate == nil {
+				continue
+			}
+
+			err = errors.Join(err, pair.validate())
+		}
 	}
 
 	return err
 }
 
-func (cs *ConfigStruct[T]) Build() validate.Validator[*T] {
+func (cs ConfigStruct[T]) Build() validate.Validator[*T] {
 	return &structValidator[T]{
 		nullable: cs.Nullable,
+		custom:   cs.Custom,
 		validate: cs.Validate,
 	}
 }

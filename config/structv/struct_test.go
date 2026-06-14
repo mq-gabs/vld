@@ -4,8 +4,6 @@ import (
 	"errors"
 	"strings"
 	"testing"
-
-	"github.com/mq-gabs/vld/config/validate"
 )
 
 type mockValidator[T any] struct {
@@ -24,7 +22,7 @@ type User struct {
 func TestStructValidatorNullable(t *testing.T) {
 	cfg := ConfigStruct[User]{
 		Nullable: true,
-		Validate: func(User) []Pair {
+		Validate: func(*User) []Pair {
 			return nil
 		},
 	}
@@ -41,7 +39,7 @@ func TestStructValidatorNullable(t *testing.T) {
 func TestStructValidatorNotNullable(t *testing.T) {
 	cfg := ConfigStruct[User]{
 		Nullable: false,
-		Validate: func(User) []Pair {
+		Validate: func(*User) []Pair {
 			return nil
 		},
 	}
@@ -56,9 +54,9 @@ func TestStructValidatorNotNullable(t *testing.T) {
 }
 
 func TestStructValidatorSuccess(t *testing.T) {
-	nameValidator := mockValidator[string]{
-		validate: func(v string) error {
-			if len(v) < 3 {
+	nameValidator := mockValidator[*string]{
+		validate: func(v *string) error {
+			if len(*v) < 3 {
 				return errors.New("invalid name")
 			}
 
@@ -66,9 +64,9 @@ func TestStructValidatorSuccess(t *testing.T) {
 		},
 	}
 
-	ageValidator := mockValidator[int]{
-		validate: func(v int) error {
-			if v < 18 {
+	ageValidator := mockValidator[*int]{
+		validate: func(v *int) error {
+			if *v < 18 {
 				return errors.New("invalid age")
 			}
 
@@ -77,10 +75,10 @@ func TestStructValidatorSuccess(t *testing.T) {
 	}
 
 	cfg := ConfigStruct[User]{
-		Validate: func(u User) []Pair {
+		Validate: func(u *User) []Pair {
 			return []Pair{
-				NewPair("name", u.Name, nameValidator),
-				NewPair("age", u.Age, ageValidator),
+				NewPair("name", &u.Name, nameValidator),
+				NewPair("age", &u.Age, ageValidator),
 			}
 		},
 	}
@@ -98,9 +96,9 @@ func TestStructValidatorSuccess(t *testing.T) {
 }
 
 func TestStructValidatorSingleFailure(t *testing.T) {
-	nameValidator := mockValidator[string]{
-		validate: func(v string) error {
-			if len(v) < 3 {
+	nameValidator := mockValidator[*string]{
+		validate: func(v *string) error {
+			if len(*v) < 3 {
 				return errors.New("too short")
 			}
 
@@ -108,17 +106,17 @@ func TestStructValidatorSingleFailure(t *testing.T) {
 		},
 	}
 
-	ageValidator := mockValidator[int]{
-		validate: func(v int) error {
+	ageValidator := mockValidator[*int]{
+		validate: func(v *int) error {
 			return nil
 		},
 	}
 
 	cfg := ConfigStruct[User]{
-		Validate: func(u User) []Pair {
+		Validate: func(u *User) []Pair {
 			return []Pair{
-				NewPair("name", u.Name, nameValidator),
-				NewPair("age", u.Age, ageValidator),
+				NewPair("name", &u.Name, nameValidator),
+				NewPair("age", &u.Age, ageValidator),
 			}
 		},
 	}
@@ -140,9 +138,9 @@ func TestStructValidatorSingleFailure(t *testing.T) {
 }
 
 func TestStructValidatorMultipleFailures(t *testing.T) {
-	nameValidator := mockValidator[string]{
-		validate: func(v string) error {
-			if len(v) < 3 {
+	nameValidator := mockValidator[*string]{
+		validate: func(v *string) error {
+			if len(*v) < 3 {
 				return errors.New("too short")
 			}
 
@@ -150,9 +148,9 @@ func TestStructValidatorMultipleFailures(t *testing.T) {
 		},
 	}
 
-	ageValidator := mockValidator[int]{
-		validate: func(v int) error {
-			if v < 18 {
+	ageValidator := mockValidator[*int]{
+		validate: func(v *int) error {
+			if *v < 18 {
 				return errors.New("too young")
 			}
 
@@ -161,10 +159,10 @@ func TestStructValidatorMultipleFailures(t *testing.T) {
 	}
 
 	cfg := ConfigStruct[User]{
-		Validate: func(u User) []Pair {
+		Validate: func(u *User) []Pair {
 			return []Pair{
-				NewPair("name", u.Name, nameValidator),
-				NewPair("age", u.Age, ageValidator),
+				NewPair("name", &u.Name, nameValidator),
+				NewPair("age", &u.Age, ageValidator),
 			}
 		},
 	}
@@ -193,7 +191,7 @@ func TestStructValidatorMultipleFailures(t *testing.T) {
 
 func TestStructValidatorNilPairValidation(t *testing.T) {
 	cfg := ConfigStruct[User]{
-		Validate: func(User) []Pair {
+		Validate: func(*User) []Pair {
 			return []Pair{
 				{},
 			}
@@ -215,19 +213,19 @@ func TestStructValidatorNilPairValidation(t *testing.T) {
 func TestNewPairPassesValueToValidator(t *testing.T) {
 	called := false
 
-	validator := mockValidator[string]{
-		validate: func(v string) error {
+	validator := mockValidator[*string]{
+		validate: func(v *string) error {
 			called = true
 
-			if v != "john" {
-				t.Fatalf("expected john, got %s", v)
+			if *v != "john" {
+				t.Fatalf("expected john, got %s", *v)
 			}
 
 			return nil
 		},
 	}
-
-	pair := NewPair("name", "john", validator)
+	name := "john"
+	pair := NewPair("name", &name, validator)
 
 	err := pair.validate()
 
@@ -240,4 +238,38 @@ func TestNewPairPassesValueToValidator(t *testing.T) {
 	}
 }
 
-var _ validate.Validator[*User] = (*structValidator[User])(nil)
+func TestCustomValidation(t *testing.T) {
+	cfg := ConfigStruct[User]{
+		Custom: func(u *User) error {
+			if u.Name == "john" && u.Age < 18 {
+				return errors.New("invalid data")
+			}
+
+			return nil
+		},
+	}.Build()
+
+	err := cfg.Validate(&User{
+		Name: "john",
+		Age:  18,
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	err = cfg.Validate(&User{
+		Name: "johna",
+		Age:  15,
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	err = cfg.Validate(&User{
+		Name: "john",
+		Age:  15,
+	})
+	if err == nil {
+		t.Fatal("expected error")
+	}
+}
