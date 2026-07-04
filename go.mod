@@ -1,6 +1,6 @@
 module github.com/mq-gabs/vld
 
-go 1.23.3
+go 1.26.4
 
 require github.com/stretchr/testify v1.11.1
 
