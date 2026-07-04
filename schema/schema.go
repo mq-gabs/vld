@@ -2,6 +2,7 @@ package schema
 
 import (
 	"errors"
+	"slices"
 )
 
 type Validator[T any] func(T) error
@@ -42,4 +43,10 @@ func (bs *baseSchema[T]) Validate(value any) error {
 
 func (bs *baseSchema[T]) appendValidator(newValidator Validator[T]) {
 	bs.validators = append(bs.validators, newValidator)
+}
+
+func (bs *baseSchema[T]) clone() baseSchema[T] {
+	return baseSchema[T]{
+		validators: slices.Clone(bs.validators),
+	}
 }

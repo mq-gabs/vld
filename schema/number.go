@@ -18,6 +18,7 @@ type schemaNumber[T TypeNumber] struct {
 type SchemaNumber[T TypeNumber] interface {
 	Schema[T]
 
+	Clone() SchemaNumber[T]
 	Custom(Validator[T]) SchemaNumber[T]
 	Min(T) SchemaNumber[T]
 	Max(T) SchemaNumber[T]
@@ -30,6 +31,12 @@ type SchemaNumber[T TypeNumber] interface {
 func Number[T TypeNumber]() SchemaNumber[T] {
 	return &schemaNumber[T]{
 		baseSchema: newBaseSchema[T](),
+	}
+}
+
+func (ns *schemaNumber[T]) Clone() SchemaNumber[T] {
+	return &schemaNumber[T]{
+		baseSchema: ns.baseSchema.clone(),
 	}
 }
 

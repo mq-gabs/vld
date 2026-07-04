@@ -20,6 +20,7 @@ type schemaString struct {
 type SchemaString interface {
 	Schema[string]
 
+	Clone() SchemaString
 	Custom(Validator[string]) SchemaString
 	LengthMin(int) SchemaString
 	LengthMax(int) SchemaString
@@ -32,6 +33,12 @@ type SchemaString interface {
 func String() SchemaString {
 	return &schemaString{
 		baseSchema: newBaseSchema[string](),
+	}
+}
+
+func (ss *schemaString) Clone() SchemaString {
+	return &schemaString{
+		baseSchema: ss.baseSchema.clone(),
 	}
 }
 

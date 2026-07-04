@@ -12,6 +12,7 @@ type schemaMap[T comparable, U any] struct {
 type SchemaMap[T comparable, U any] interface {
 	Schema[map[T]U]
 
+	Clone() SchemaMap[T, U]
 	Custom(Validator[map[T]U]) SchemaMap[T, U]
 	LengthMax(int) SchemaMap[T, U]
 	LengthMin(int) SchemaMap[T, U]
@@ -28,6 +29,12 @@ func (ms *schemaMap[T, U]) Custom(fn Validator[map[T]U]) SchemaMap[T, U] {
 	ms.appendValidator(fn)
 
 	return ms
+}
+
+func (ms *schemaMap[T, U]) Clone() SchemaMap[T, U] {
+	return &schemaMap[T, U]{
+		baseSchema: ms.baseSchema.clone(),
+	}
 }
 
 func (ms *schemaMap[T, U]) LengthMax(max int) SchemaMap[T, U] {

@@ -11,12 +11,21 @@ type schemaStruct[T any] struct {
 
 type SchemaStruct[T any] interface {
 	Schema[T]
+
+	Clone() SchemaStruct[T]
 }
 
 func Struct[T any](fn TupleSet[T]) SchemaStruct[T] {
 	return &schemaStruct[T]{
 		baseSchema: newBaseSchema[T](),
 		tupleSet:   fn,
+	}
+}
+
+func (ss *schemaStruct[T]) Clone() SchemaStruct[T] {
+	return &schemaStruct[T]{
+		baseSchema: ss.baseSchema.clone(),
+		tupleSet:   ss.tupleSet,
 	}
 }
 
