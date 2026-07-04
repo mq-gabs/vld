@@ -13,23 +13,35 @@ var (
 	regexURL   = regexp.MustCompile(`^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$`)
 )
 
-type SchemaString struct {
+type schemaString struct {
 	baseSchema[string]
 }
 
-func String() *SchemaString {
-	return &SchemaString{
+type SchemaString interface {
+	Schema[string]
+
+	Custom(Validator[string]) SchemaString
+	LengthMin(int) SchemaString
+	LengthMax(int) SchemaString
+	UUID() SchemaString
+	Email() SchemaString
+	URL() SchemaString
+	Enum([]string) SchemaString
+}
+
+func String() SchemaString {
+	return &schemaString{
 		baseSchema: newBaseSchema[string](),
 	}
 }
 
-func (ss *SchemaString) Custom(fn Validator[string]) *SchemaString {
+func (ss *schemaString) Custom(fn Validator[string]) SchemaString {
 	ss.appendValidator(fn)
 
 	return ss
 }
 
-func (ss *SchemaString) LengthMin(minSize int) *SchemaString {
+func (ss *schemaString) LengthMin(minSize int) SchemaString {
 	ss.appendValidator(func(value string) error {
 		if len(value) < minSize {
 			return fmt.Errorf("required min length: %v", minSize)
@@ -41,7 +53,7 @@ func (ss *SchemaString) LengthMin(minSize int) *SchemaString {
 	return ss
 }
 
-func (ss *SchemaString) LengthMax(maxSize int) *SchemaString {
+func (ss *schemaString) LengthMax(maxSize int) SchemaString {
 	ss.appendValidator(func(value string) error {
 		if len(value) > maxSize {
 			return fmt.Errorf("required max length: %v", maxSize)
@@ -53,7 +65,7 @@ func (ss *SchemaString) LengthMax(maxSize int) *SchemaString {
 	return ss
 }
 
-func (ss *SchemaString) UUID() *SchemaString {
+func (ss *schemaString) UUID() SchemaString {
 	ss.appendValidator(func(s string) error {
 		if !regexUUID.MatchString(s) {
 			return errors.New("must be valid UUID")
@@ -65,7 +77,7 @@ func (ss *SchemaString) UUID() *SchemaString {
 	return ss
 }
 
-func (ss *SchemaString) Email() *SchemaString {
+func (ss *schemaString) Email() SchemaString {
 	ss.appendValidator(func(s string) error {
 		if !regexEmail.MatchString(s) {
 			return errors.New("must be valid email")
@@ -77,7 +89,7 @@ func (ss *SchemaString) Email() *SchemaString {
 	return ss
 }
 
-func (ss *SchemaString) URL() *SchemaString {
+func (ss *schemaString) URL() SchemaString {
 	ss.appendValidator(func(s string) error {
 		if !regexURL.MatchString(s) {
 			return errors.New("must be valid URL")
@@ -89,7 +101,7 @@ func (ss *SchemaString) URL() *SchemaString {
 	return ss
 }
 
-func (ss *SchemaString) Enum(enum []string) *SchemaString {
+func (ss *schemaString) Enum(enum []string) SchemaString {
 	if len(enum) == 0 {
 		ss.appendValidator(func(s string) error {
 			return errors.New("invalid setting, enum must not be empty")

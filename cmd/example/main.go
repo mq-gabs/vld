@@ -17,18 +17,6 @@ type User struct {
 	Age          int
 }
 
-func (u User) SchemaJSON() map[string]any {
-	return map[string]any{
-		"id":           u.ID,
-		"name":         u.Name,
-		"email":        u.Email,
-		"password":     u.Password,
-		"personalPage": u.PersonalPage,
-		"products":     u.Products,
-		"age":          u.Age,
-	}
-}
-
 func main() {
 	idSchema := schema.Number[int]().Positive()
 	nameSchema := schema.String().LengthMin(4).LengthMax(64)

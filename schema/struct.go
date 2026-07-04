@@ -4,19 +4,23 @@ import (
 	"errors"
 )
 
-type SchemaStruct[T any] struct {
+type schemaStruct[T any] struct {
 	baseSchema[T]
 	tupleSet TupleSet[T]
 }
 
-func Struct[T any](fn TupleSet[T]) *SchemaStruct[T] {
-	return &SchemaStruct[T]{
+type SchemaStruct[T any] interface {
+	Schema[T]
+}
+
+func Struct[T any](fn TupleSet[T]) SchemaStruct[T] {
+	return &schemaStruct[T]{
 		baseSchema: newBaseSchema[T](),
 		tupleSet:   fn,
 	}
 }
 
-func (ss *SchemaStruct[T]) Validate(v any) error {
+func (ss *schemaStruct[T]) Validate(v any) error {
 	typedV, ok := v.(*T)
 	if !ok {
 		return errors.New("invalid type")

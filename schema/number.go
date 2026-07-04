@@ -5,29 +5,41 @@ import (
 	"fmt"
 )
 
-type NumberType interface {
+type TypeNumber interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr |
 		~float32 | ~float64
 }
 
-type SchemaNumber[T NumberType] struct {
+type schemaNumber[T TypeNumber] struct {
 	baseSchema[T]
 }
 
-func Number[T NumberType]() *SchemaNumber[T] {
-	return &SchemaNumber[T]{
+type SchemaNumber[T TypeNumber] interface {
+	Schema[T]
+
+	Custom(Validator[T]) SchemaNumber[T]
+	Min(T) SchemaNumber[T]
+	Max(T) SchemaNumber[T]
+	Equals(T) SchemaNumber[T]
+	NonZero() SchemaNumber[T]
+	Positive() SchemaNumber[T]
+	Negative() SchemaNumber[T]
+}
+
+func Number[T TypeNumber]() SchemaNumber[T] {
+	return &schemaNumber[T]{
 		baseSchema: newBaseSchema[T](),
 	}
 }
 
-func (ns *SchemaNumber[T]) Custom(fn Validator[T]) *SchemaNumber[T] {
+func (ns *schemaNumber[T]) Custom(fn Validator[T]) SchemaNumber[T] {
 	ns.appendValidator(fn)
 
 	return ns
 }
 
-func (ns *SchemaNumber[T]) Min(min T) *SchemaNumber[T] {
+func (ns *schemaNumber[T]) Min(min T) SchemaNumber[T] {
 	ns.appendValidator(func(i T) error {
 		if i < min {
 			return fmt.Errorf("required min value: %v", min)
@@ -39,7 +51,7 @@ func (ns *SchemaNumber[T]) Min(min T) *SchemaNumber[T] {
 	return ns
 }
 
-func (is *SchemaNumber[T]) Max(max T) *SchemaNumber[T] {
+func (is *schemaNumber[T]) Max(max T) SchemaNumber[T] {
 	is.appendValidator(func(i T) error {
 		if i > max {
 			return fmt.Errorf("required max value: %v", i)
@@ -51,7 +63,7 @@ func (is *SchemaNumber[T]) Max(max T) *SchemaNumber[T] {
 	return is
 }
 
-func (is *SchemaNumber[T]) Equals(target T) *SchemaNumber[T] {
+func (is *schemaNumber[T]) Equals(target T) SchemaNumber[T] {
 	is.appendValidator(func(i T) error {
 		if i != target {
 			return fmt.Errorf("value must be equal to: %v", target)
@@ -63,7 +75,7 @@ func (is *SchemaNumber[T]) Equals(target T) *SchemaNumber[T] {
 	return is
 }
 
-func (is *SchemaNumber[T]) NonZero() *SchemaNumber[T] {
+func (is *schemaNumber[T]) NonZero() SchemaNumber[T] {
 	is.appendValidator(func(i T) error {
 		if i == 0 {
 			return errors.New("value must be non zero")
@@ -75,7 +87,7 @@ func (is *SchemaNumber[T]) NonZero() *SchemaNumber[T] {
 	return is
 }
 
-func (is *SchemaNumber[T]) Positive() *SchemaNumber[T] {
+func (is *schemaNumber[T]) Positive() SchemaNumber[T] {
 	is.appendValidator(func(i T) error {
 		if i < 0 {
 			return errors.New("value must be positive")
@@ -87,7 +99,7 @@ func (is *SchemaNumber[T]) Positive() *SchemaNumber[T] {
 	return is
 }
 
-func (is *SchemaNumber[T]) Negative() *SchemaNumber[T] {
+func (is *schemaNumber[T]) Negative() SchemaNumber[T] {
 	is.appendValidator(func(i T) error {
 		if i > 0 {
 			return errors.New("value must be negative")

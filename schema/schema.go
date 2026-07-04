@@ -34,10 +34,7 @@ func (bs *baseSchema[T]) Validate(value any) error {
 
 	var err error
 	for _, valid := range bs.validators {
-		e := valid(typedValue)
-		if e != nil {
-			err = errors.Join(err, e)
-		}
+		err = errors.Join(err, valid(typedValue))
 	}
 
 	return err

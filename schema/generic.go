@@ -1,16 +1,22 @@
 package schema
 
-type SchemaGeneric struct {
+type schemaGeneric struct {
 	baseSchema[any]
 }
 
-func Generic() *SchemaGeneric {
-	return &SchemaGeneric{
+type SchemaGeneric interface {
+	Schema[any]
+
+	Custom(fn Validator[any]) SchemaGeneric
+}
+
+func Generic() SchemaGeneric {
+	return &schemaGeneric{
 		baseSchema: newBaseSchema[any](),
 	}
 }
 
-func (sg *SchemaGeneric) Custom(fn Validator[any]) *SchemaGeneric {
+func (sg *schemaGeneric) Custom(fn Validator[any]) SchemaGeneric {
 	sg.appendValidator(fn)
 
 	return sg

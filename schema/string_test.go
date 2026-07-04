@@ -37,7 +37,7 @@ func Test_StringEnum(t *testing.T) {
 type regexTestCase struct {
 	value  string
 	valid  bool
-	schema *SchemaString
+	schema SchemaString
 }
 
 func Test_Regex(t *testing.T) {
