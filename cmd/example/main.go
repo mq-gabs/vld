@@ -14,6 +14,7 @@ type User struct {
 	Password     string
 	PersonalPage string
 	Products     []string
+	Age          int
 }
 
 func (u User) SchemaJSON() map[string]any {
@@ -24,6 +25,7 @@ func (u User) SchemaJSON() map[string]any {
 		"password":     u.Password,
 		"personalPage": u.PersonalPage,
 		"products":     u.Products,
+		"age":          u.Age,
 	}
 }
 
@@ -44,6 +46,7 @@ func main() {
 
 		return err
 	})
+	ageSchema := schema.Number[uint]().Positive().Max(120)
 
 	userSchema := schema.Struct(func(b schema.Builder, u *User) {
 		b.F(u.ID, idSchema)
@@ -52,6 +55,7 @@ func main() {
 		b.F(u.Password, passwordSchema)
 		b.F(u.PersonalPage, personalPageSchema)
 		b.F(u.Products, userProductsSchema)
+		b.F(u.Age, ageSchema)
 	})
 
 	validUser := User{
