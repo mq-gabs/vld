@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"slices"
+	"strings"
 )
 
 var (
@@ -29,6 +30,10 @@ type SchemaString interface {
 	Email() SchemaString
 	URL() SchemaString
 	Enum([]string) SchemaString
+
+	Trim() SchemaString
+	Upper() SchemaString
+	Lower() SchemaString
 }
 
 func String() SchemaString {
@@ -135,6 +140,30 @@ func (ss *schemaString) Enum(enum []string) SchemaString {
 		}
 
 		return nil
+	})
+
+	return ss
+}
+
+func (ss *schemaString) Trim() SchemaString {
+	ss.appendParser(func(s string) string {
+		return strings.TrimSpace(s)
+	})
+
+	return ss
+}
+
+func (ss *schemaString) Upper() SchemaString {
+	ss.appendParser(func(s string) string {
+		return strings.ToUpper(s)
+	})
+
+	return ss
+}
+
+func (ss *schemaString) Lower() SchemaString {
+	ss.appendParser(func(s string) string {
+		return strings.ToLower(s)
 	})
 
 	return ss

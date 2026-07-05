@@ -60,6 +60,10 @@ func (bs *baseSchema[T]) appendValidator(newValidator Validator[T]) {
 	bs.validators = append(bs.validators, newValidator)
 }
 
+func (bs *baseSchema[T]) appendParser(newParser Parser[T]) {
+	bs.parsers = append(bs.parsers, newParser)
+}
+
 func (bs *baseSchema[T]) clone() baseSchema[T] {
 	return baseSchema[T]{
 		validators: slices.Clone(bs.validators),
