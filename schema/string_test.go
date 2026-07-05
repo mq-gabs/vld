@@ -83,3 +83,12 @@ func Test_Regex(t *testing.T) {
 		assert.Equal(t, isValid, tt.valid)
 	}
 }
+
+func Test_StringOptional(t *testing.T) {
+	s := String().LengthMin(4).Optional()
+
+	err := s.Validate("")
+	if err != nil {
+		t.Fatalf("expected no error, but got: %v", err)
+	}
+}

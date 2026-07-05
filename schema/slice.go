@@ -12,6 +12,7 @@ type schemaSlice[T comparable] struct {
 type SchemaSlice[T comparable] interface {
 	Schema[[]T]
 
+	Optional() SchemaSlice[T]
 	Clone() SchemaSlice[T]
 	Custom(Validator[[]T]) SchemaSlice[T]
 	LengthMin(int) SchemaSlice[T]
@@ -20,10 +21,22 @@ type SchemaSlice[T comparable] interface {
 }
 
 func Slice[T comparable]() SchemaSlice[T] {
-	return &schemaSlice[T]{
+	bs := &schemaSlice[T]{
 		baseSchema: newBaseSchema[[]T](),
 	}
+
+	bs.isZero = func(t []T) bool {
+		return len(t) == 0
+	}
+
+	return bs
 }
+
+func (ss *schemaSlice[T]) Optional() SchemaSlice[T] {
+	ss.optional = true
+	return ss
+}
+
 func (ss *schemaSlice[T]) Clone() SchemaSlice[T] {
 	return &schemaSlice[T]{
 		baseSchema: ss.baseSchema.clone(),

@@ -40,3 +40,13 @@ func Test_MapChild(t *testing.T) {
 		t.Error(errExpectedError)
 	}
 }
+
+func Test_MapOptional(t *testing.T) {
+	s := Map[string, int]().LengthMin(4).Optional()
+
+	err := s.Validate(nil)
+	err = s.Validate(map[string]int{})
+	if err != nil {
+		t.Fatalf("expected no error, but got: %v", err)
+	}
+}

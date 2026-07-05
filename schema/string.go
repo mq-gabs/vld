@@ -20,6 +20,7 @@ type schemaString struct {
 type SchemaString interface {
 	Schema[string]
 
+	Optional() SchemaString
 	Clone() SchemaString
 	Custom(Validator[string]) SchemaString
 	LengthMin(int) SchemaString
@@ -31,9 +32,20 @@ type SchemaString interface {
 }
 
 func String() SchemaString {
-	return &schemaString{
+	bs := &schemaString{
 		baseSchema: newBaseSchema[string](),
 	}
+
+	bs.isZero = func(s string) bool {
+		return s == ""
+	}
+
+	return bs
+}
+
+func (ss *schemaString) Optional() SchemaString {
+	ss.optional = true
+	return ss
 }
 
 func (ss *schemaString) Clone() SchemaString {

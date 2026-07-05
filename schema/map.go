@@ -13,6 +13,7 @@ type SchemaMap[T comparable, U any] interface {
 	Schema[map[T]U]
 
 	Clone() SchemaMap[T, U]
+	Optional() SchemaMap[T, U]
 	Custom(Validator[map[T]U]) SchemaMap[T, U]
 	LengthMax(int) SchemaMap[T, U]
 	LengthMin(int) SchemaMap[T, U]
@@ -20,9 +21,21 @@ type SchemaMap[T comparable, U any] interface {
 }
 
 func Map[T comparable, U any]() SchemaMap[T, U] {
-	return &schemaMap[T, U]{
+	bs := &schemaMap[T, U]{
 		baseSchema: newBaseSchema[map[T]U](),
 	}
+
+	bs.isZero = func(m map[T]U) bool {
+		return len(m) == 0
+	}
+
+	return bs
+}
+
+func (ms *schemaMap[T, U]) Optional() SchemaMap[T, U] {
+	ms.optional = true
+
+	return ms
 }
 
 func (ms *schemaMap[T, U]) Custom(fn Validator[map[T]U]) SchemaMap[T, U] {

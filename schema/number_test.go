@@ -17,3 +17,12 @@ func Test_Number(t *testing.T) {
 		t.Error(errExpectedError)
 	}
 }
+
+func Test_NumberOptional(t *testing.T) {
+	s := Number[int]().Min(10).Optional()
+
+	err := s.Validate(0)
+	if err != nil {
+		t.Fatalf("expected no error, but got %v", err)
+	}
+}

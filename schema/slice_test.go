@@ -17,3 +17,13 @@ func Test_Slice(t *testing.T) {
 		t.Error(errExpectedError)
 	}
 }
+
+func Test_SliceOptional(t *testing.T) {
+	s := Slice[int]().Optional().LengthMin(4)
+
+	err := s.Validate(nil)
+	err = s.Validate([]int{})
+	if err != nil {
+		t.Fatalf("expected no error, but got: %v", err)
+	}
+}

@@ -19,6 +19,7 @@ type SchemaNumber[T TypeNumber] interface {
 	Schema[T]
 
 	Clone() SchemaNumber[T]
+	Optional() SchemaNumber[T]
 	Custom(Validator[T]) SchemaNumber[T]
 	Min(T) SchemaNumber[T]
 	Max(T) SchemaNumber[T]
@@ -29,9 +30,20 @@ type SchemaNumber[T TypeNumber] interface {
 }
 
 func Number[T TypeNumber]() SchemaNumber[T] {
-	return &schemaNumber[T]{
+	bs := &schemaNumber[T]{
 		baseSchema: newBaseSchema[T](),
 	}
+
+	bs.isZero = func(t T) bool {
+		return t == 0
+	}
+
+	return bs
+}
+
+func (ns *schemaNumber[T]) Optional() SchemaNumber[T] {
+	ns.optional = true
+	return ns
 }
 
 func (ns *schemaNumber[T]) Clone() SchemaNumber[T] {

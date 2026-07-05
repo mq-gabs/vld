@@ -76,3 +76,20 @@ func Test_StructInsideStruct(t *testing.T) {
 		t.Error(errExpectedError)
 	}
 }
+
+func Test_StructOptional(t *testing.T) {
+	nameS := String().LengthMax(16)
+	ageS := Number[int]().Min(18)
+
+	s := Struct(func(b Builder, t *User) {
+		b.F(t.name, nameS)
+		b.F(t.age, ageS)
+	}).Optional()
+
+	var u *User
+
+	err := s.Validate(u)
+	if err != nil {
+		t.Fatalf("expected not error, but got: %v", err)
+	}
+}
