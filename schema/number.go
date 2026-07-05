@@ -26,7 +26,9 @@ type SchemaNumber[T TypeNumber] interface {
 	Equals(T) SchemaNumber[T]
 	NonZero() SchemaNumber[T]
 	Positive() SchemaNumber[T]
+	NonPositive() SchemaNumber[T]
 	Negative() SchemaNumber[T]
+	NonNegative() SchemaNumber[T]
 }
 
 func Number[T TypeNumber]() SchemaNumber[T] {
@@ -106,10 +108,34 @@ func (is *schemaNumber[T]) NonZero() SchemaNumber[T] {
 	return is
 }
 
+func (is *schemaNumber[T]) NonPositive() SchemaNumber[T] {
+	is.appendValidator(func(t T) error {
+		if t > 0 {
+			return errors.New("value must be non-positive")
+		}
+
+		return nil
+	})
+
+	return is
+}
+
 func (is *schemaNumber[T]) Positive() SchemaNumber[T] {
 	is.appendValidator(func(i T) error {
-		if i < 0 {
+		if i <= 0 {
 			return errors.New("value must be positive")
+		}
+
+		return nil
+	})
+
+	return is
+}
+
+func (is *schemaNumber[T]) NonNegative() SchemaNumber[T] {
+	is.appendValidator(func(t T) error {
+		if t < 0 {
+			return errors.New("value must be non-negative")
 		}
 
 		return nil
@@ -120,7 +146,7 @@ func (is *schemaNumber[T]) Positive() SchemaNumber[T] {
 
 func (is *schemaNumber[T]) Negative() SchemaNumber[T] {
 	is.appendValidator(func(i T) error {
-		if i > 0 {
+		if i >= 0 {
 			return errors.New("value must be negative")
 		}
 
