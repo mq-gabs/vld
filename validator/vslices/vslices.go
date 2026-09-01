@@ -2,8 +2,8 @@ package vslices
 
 import (
 	"errors"
-	"fmt"
 
+	"github.com/mq-gabs/vld/internal/utils"
 	"github.com/mq-gabs/vld/validator"
 )
 
@@ -15,14 +15,14 @@ type SliceValidator[T any] func([]T) error
 
 func Slice[T any](name string, validators ...SliceValidator[T]) SliceValidator[T] {
 	return func(t []T) error {
-		var err error
+		err := utils.NewErrorGroup(utils.WithSeparator(","))
 
 		for _, validate := range validators {
-			err = errors.Join(err, validate(t))
+			err.Join(validate(t))
 		}
 
-		if err != nil {
-			return fmt.Errorf("name=%s;errors=%w", name, err)
+		if !err.IsNil() {
+			return err
 		}
 
 		return nil

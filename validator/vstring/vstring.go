@@ -2,12 +2,12 @@ package vstring
 
 import (
 	"errors"
-	"fmt"
 	"regexp"
 	"slices"
 	"strings"
 	"unicode"
 
+	"github.com/mq-gabs/vld/internal/utils"
 	"github.com/mq-gabs/vld/validator"
 )
 
@@ -30,14 +30,14 @@ type StringValidator func(string) error
 // String groups other validators in a single function identifing the value by its name
 func String(name string, validators ...StringValidator) StringValidator {
 	return func(value string) error {
-		var err error
+		err := utils.NewErrorGroup(utils.WithSeparator(","))
 
 		for _, validate := range validators {
-			err = errors.Join(err, validate(value))
+			err.Join(validate(value))
 		}
 
-		if err != nil {
-			return fmt.Errorf("name=%s;errors=%w", name, err)
+		if !err.IsNil() {
+			return err
 		}
 
 		return nil

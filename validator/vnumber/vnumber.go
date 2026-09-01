@@ -2,8 +2,9 @@ package vnumber
 
 import (
 	"errors"
-	"fmt"
 	"slices"
+
+	"github.com/mq-gabs/vld/internal/utils"
 )
 
 var (
@@ -32,14 +33,14 @@ type NumberValidator[T Numeric] func(T) error
 // Number groups other validators in a single function identifying the value by its name
 func Number[T Numeric](name string, validators ...NumberValidator[T]) NumberValidator[T] {
 	return func(value T) error {
-		var err error
+		err := utils.NewErrorGroup(utils.WithSeparator(","))
 
 		for _, validate := range validators {
-			err = errors.Join(err, validate(value))
+			err.Join(validate(value))
 		}
 
-		if err != nil {
-			return fmt.Errorf("name=%s;errors=%w", name, err)
+		if !err.IsNil() {
+			return err
 		}
 
 		return nil
