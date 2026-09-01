@@ -1,4 +1,4 @@
-package validator
+package vstring
 
 import (
 	"errors"
@@ -7,6 +7,8 @@ import (
 	"slices"
 	"strings"
 	"unicode"
+
+	"github.com/mq-gabs/vld/validator"
 )
 
 var (
@@ -46,7 +48,7 @@ func String(name string, validators ...StringValidator) StringValidator {
 func StringRequired() StringValidator {
 	return func(s string) error {
 		if s == "" {
-			return ErrValueIsRequired
+			return validator.ErrValueIsRequired
 		}
 
 		return nil
@@ -57,7 +59,7 @@ func StringRequired() StringValidator {
 func MinLen(min int) StringValidator {
 	return func(s string) error {
 		if len(s) < min {
-			return ErrMinLen
+			return validator.ErrMinLen
 		}
 
 		return nil
@@ -68,7 +70,7 @@ func MinLen(min int) StringValidator {
 func MaxLen(max int) StringValidator {
 	return func(s string) error {
 		if len(s) > max {
-			return ErrMaxLen
+			return validator.ErrMaxLen
 		}
 
 		return nil

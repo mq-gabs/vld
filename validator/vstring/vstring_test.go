@@ -1,13 +1,15 @@
-package validator
+package vstring
 
 import (
 	"errors"
 	"strings"
 	"testing"
+
+	"github.com/mq-gabs/vld/validator"
 )
 
 func Test_String(t *testing.T) {
-	validator := String("name",
+	validate := String("name",
 		StringRequired(),
 		MaxLen(10),
 		MinLen(3),
@@ -37,7 +39,7 @@ func Test_String(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.value, func(t *testing.T) {
-			err := validator(tt.value)
+			err := validate(tt.value)
 
 			if tt.valid && err != nil {
 				t.Fatalf("expected valid but it's invalid: %v", err)
@@ -51,7 +53,7 @@ func Test_String(t *testing.T) {
 }
 
 func Test_StringRequired(t *testing.T) {
-	validator := StringRequired()
+	validate := StringRequired()
 
 	tests := []struct {
 		name  string
@@ -77,7 +79,7 @@ func Test_StringRequired(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validator(tt.value)
+			err := validate(tt.value)
 
 			if tt.valid && err != nil {
 				t.Fatalf("expected valid but got error: %v", err)
@@ -87,7 +89,7 @@ func Test_StringRequired(t *testing.T) {
 				t.Fatalf("expected error but got none")
 			}
 
-			if !tt.valid && !errors.Is(err, ErrValueIsRequired) {
+			if !tt.valid && !errors.Is(err, validator.ErrValueIsRequired) {
 				t.Fatalf("expected ErrValueIsRequired but got: %v", err)
 			}
 		})
@@ -95,7 +97,7 @@ func Test_StringRequired(t *testing.T) {
 }
 
 func Test_MinLen(t *testing.T) {
-	validator := MinLen(5)
+	validate := MinLen(5)
 
 	tests := []struct {
 		name  string
@@ -126,7 +128,7 @@ func Test_MinLen(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validator(tt.value)
+			err := validate(tt.value)
 
 			if tt.valid && err != nil {
 				t.Fatalf("expected valid but got error: %v", err)
@@ -136,7 +138,7 @@ func Test_MinLen(t *testing.T) {
 				t.Fatalf("expected error but got none")
 			}
 
-			if !tt.valid && !errors.Is(err, ErrMinLen) {
+			if !tt.valid && !errors.Is(err, validator.ErrMinLen) {
 				t.Fatalf("expected ErrMinLen but got: %v", err)
 			}
 		})
@@ -144,7 +146,7 @@ func Test_MinLen(t *testing.T) {
 }
 
 func Test_MaxLen(t *testing.T) {
-	validator := MaxLen(10)
+	validate := MaxLen(10)
 
 	tests := []struct {
 		name  string
@@ -175,7 +177,7 @@ func Test_MaxLen(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validator(tt.value)
+			err := validate(tt.value)
 
 			if tt.valid && err != nil {
 				t.Fatalf("expected valid but got error: %v", err)
@@ -185,7 +187,7 @@ func Test_MaxLen(t *testing.T) {
 				t.Fatalf("expected error but got none")
 			}
 
-			if !tt.valid && !errors.Is(err, ErrMaxLen) {
+			if !tt.valid && !errors.Is(err, validator.ErrMaxLen) {
 				t.Fatalf("expected ErrMaxLen but got: %v", err)
 			}
 		})
@@ -193,7 +195,7 @@ func Test_MaxLen(t *testing.T) {
 }
 
 func Test_Email(t *testing.T) {
-	validator := Email()
+	validate := Email()
 
 	tests := []struct {
 		name  string
@@ -244,7 +246,7 @@ func Test_Email(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validator(tt.value)
+			err := validate(tt.value)
 
 			if tt.valid && err != nil {
 				t.Fatalf("expected valid but got error: %v", err)
@@ -262,7 +264,7 @@ func Test_Email(t *testing.T) {
 }
 
 func Test_UUID(t *testing.T) {
-	validator := UUIDv4()
+	validate := UUIDv4()
 
 	tests := []struct {
 		name  string
@@ -308,7 +310,7 @@ func Test_UUID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validator(tt.value)
+			err := validate(tt.value)
 
 			if tt.valid && err != nil {
 				t.Fatalf("expected valid but got error: %v", err)
@@ -388,7 +390,7 @@ func Test_Pattern(t *testing.T) {
 }
 
 func Test_Alphanumeric(t *testing.T) {
-	validator := Alphanumeric()
+	validate := Alphanumeric()
 
 	tests := []struct {
 		name  string
@@ -429,7 +431,7 @@ func Test_Alphanumeric(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validator(tt.value)
+			err := validate(tt.value)
 
 			if tt.valid && err != nil {
 				t.Fatalf("expected valid but got error: %v", err)
