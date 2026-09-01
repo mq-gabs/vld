@@ -10,8 +10,6 @@ import (
 )
 
 var (
-	ErrMinLen        = errors.New("value must have min length")
-	ErrMaxLen        = errors.New("value must have max length")
 	ErrInvalidEmail  = errors.New("invalid email format")
 	ErrInvalidUUID   = errors.New("invalid uuid format")
 	ErrNoMatch       = errors.New("value does not match required pattern")
