@@ -33,7 +33,7 @@ type NumberValidator[T Numeric] func(T) error
 // Number groups other validators in a single function identifying the value by its name
 func Number[T Numeric](name string, validators ...NumberValidator[T]) NumberValidator[T] {
 	return func(value T) error {
-		err := utils.NewErrorGroup(utils.WithSeparator(","))
+		err := utils.NewErrorGroup(utils.WithName(name), utils.WithSeparator(","))
 
 		for _, validate := range validators {
 			err.Join(validate(value))

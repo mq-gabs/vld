@@ -24,7 +24,7 @@ type MapValidator[K comparable, V any] func(map[K]V) error
 // Map groups other validators in a single function identifying the value by its name
 func Map[K comparable, V any](name string, validators ...MapValidator[K, V]) MapValidator[K, V] {
 	return func(m map[K]V) error {
-		err := utils.NewErrorGroup(utils.WithSeparator(","))
+		err := utils.NewErrorGroup(utils.WithName(name), utils.WithSeparator(","))
 
 		for _, validate := range validators {
 			err.Join(validate(m))

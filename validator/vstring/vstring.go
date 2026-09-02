@@ -30,7 +30,7 @@ type StringValidator func(string) error
 // String groups other validators in a single function identifing the value by its name
 func String(name string, validators ...StringValidator) StringValidator {
 	return func(value string) error {
-		err := utils.NewErrorGroup(utils.WithSeparator(","))
+		err := utils.NewErrorGroup(utils.WithName(name), utils.WithSeparator(","))
 
 		for _, validate := range validators {
 			err.Join(validate(value))

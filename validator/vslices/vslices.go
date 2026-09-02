@@ -23,7 +23,7 @@ type SliceValidator[T any] func([]T) error
 // Slice groups other validators in a single function identifying the value by its name
 func Slice[T any](name string, validators ...SliceValidator[T]) SliceValidator[T] {
 	return func(t []T) error {
-		err := utils.NewErrorGroup(utils.WithSeparator(","))
+		err := utils.NewErrorGroup(utils.WithName(name), utils.WithSeparator(","))
 
 		for _, validate := range validators {
 			err.Join(validate(t))
