@@ -454,7 +454,7 @@ func Test_NotHasKeys(t *testing.T) {
 
 func Test_EachValue_String(t *testing.T) {
 	// Wrapper to convert StringValidator to GenericValidator
-	minLenValidator := validator.GenericValidator[string](vstring.MinLen(3))
+	minLenValidator := validator.Validator[string](vstring.MinLen(3))
 	validator := EachValue[string, string](minLenValidator)
 
 	tests := []struct {
@@ -501,7 +501,7 @@ func Test_EachValue_String(t *testing.T) {
 
 func Test_EachValue_Number(t *testing.T) {
 	// Wrapper to convert NumberValidator to GenericValidator
-	isPositiveValidator := validator.GenericValidator[int](vnumber.IsPositive[int]())
+	isPositiveValidator := validator.Validator[int](vnumber.IsPositive[int]())
 	validator := EachValue[string, int](isPositiveValidator)
 
 	tests := []struct {
@@ -548,7 +548,7 @@ func Test_EachValue_Number(t *testing.T) {
 
 func Test_EachKey(t *testing.T) {
 	// Wrapper to convert StringValidator to GenericValidator
-	minLenValidator := validator.GenericValidator[string](vstring.MinLen(2))
+	minLenValidator := validator.Validator[string](vstring.MinLen(2))
 	validator := EachKey[string, string](minLenValidator)
 
 	tests := []struct {
@@ -591,7 +591,7 @@ func Test_EachKey(t *testing.T) {
 func Test_Each_Alias(t *testing.T) {
 	// Test that Each is an alias for EachValue
 	// Wrapper to convert StringValidator to GenericValidator
-	maxLenValidator := validator.GenericValidator[string](vstring.MaxLen(10))
+	maxLenValidator := validator.Validator[string](vstring.MaxLen(10))
 	validator := Each[string, string](maxLenValidator)
 
 	tests := []struct {
@@ -630,7 +630,7 @@ func Test_ComplexMap_Validation(t *testing.T) {
 	// Complex validation: map must have 1-3 items, contain "id" and "name" keys,
 	// and all values must be at least 2 characters
 	// Wrapper to convert StringValidator to GenericValidator
-	minLenValidator := validator.GenericValidator[string](vstring.MinLen(2))
+	minLenValidator := validator.Validator[string](vstring.MinLen(2))
 	validator := Map("user",
 		InRange[string, string](1, 3),
 		HasKeys[string, string]("id", "name"),

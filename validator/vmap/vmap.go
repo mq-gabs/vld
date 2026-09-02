@@ -134,7 +134,7 @@ func NotHasKeys[K comparable, V any](keys ...K) MapValidator[K, V] {
 }
 
 // EachValue validates each value in the map using the provided validator
-func EachValue[K comparable, V any](validate validator.GenericValidator[V]) MapValidator[K, V] {
+func EachValue[K comparable, V any](validate validator.Validator[V]) MapValidator[K, V] {
 	return func(m map[K]V) error {
 		err := utils.NewErrorGroup(utils.WithSeparator(","))
 		for key, val := range m {
@@ -150,7 +150,7 @@ func EachValue[K comparable, V any](validate validator.GenericValidator[V]) MapV
 }
 
 // EachKey validates each key in the map using the provided validator
-func EachKey[K comparable, V any](validate validator.GenericValidator[K]) MapValidator[K, V] {
+func EachKey[K comparable, V any](validate validator.Validator[K]) MapValidator[K, V] {
 	return func(m map[K]V) error {
 		err := utils.NewErrorGroup(utils.WithSeparator(","))
 		for key := range m {
@@ -166,6 +166,6 @@ func EachKey[K comparable, V any](validate validator.GenericValidator[K]) MapVal
 }
 
 // Each validates each value in the map using the provided validator (alias for EachValue)
-func Each[K comparable, V any](validate validator.GenericValidator[V]) MapValidator[K, V] {
+func Each[K comparable, V any](validate validator.Validator[V]) MapValidator[K, V] {
 	return EachValue[K, V](validate)
 }

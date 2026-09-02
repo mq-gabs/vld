@@ -111,7 +111,7 @@ func InRange[T any](min, max int) SliceValidator[T] {
 }
 
 // Each validates each item in the slice using the provided validator
-func Each[T any](validate validator.GenericValidator[T]) SliceValidator[T] {
+func Each[T any](validate validator.Validator[T]) SliceValidator[T] {
 	return func(t []T) error {
 		err := utils.NewErrorGroup(utils.WithSeparator(","))
 		for i, v := range t {

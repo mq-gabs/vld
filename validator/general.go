@@ -8,4 +8,12 @@ var (
 	ErrMaxLen          = errors.New("required max length")
 )
 
-type GenericValidator[T any] func(T) error
+type Validator[T any] func(T) error
+
+func When[T any](condition bool, validate func(T) error) func(T) error {
+	if condition {
+		return validate
+	}
+
+	return func(t T) error { return nil }
+}
