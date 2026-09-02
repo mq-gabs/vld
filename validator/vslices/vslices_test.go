@@ -3,7 +3,6 @@ package vslices
 import (
 	"testing"
 
-	"github.com/mq-gabs/vld/validator"
 	"github.com/mq-gabs/vld/validator/vnumber"
 	"github.com/mq-gabs/vld/validator/vstring"
 )
@@ -283,8 +282,7 @@ func Test_InRange(t *testing.T) {
 }
 
 func Test_Each_String(t *testing.T) {
-	minLenValidator := validator.Validator[string](vstring.MinLen(2))
-	validator := Each[string](minLenValidator)
+	validator := Each[string](vstring.MinLen(2))
 
 	tests := []struct {
 		name  string
@@ -329,8 +327,7 @@ func Test_Each_String(t *testing.T) {
 }
 
 func Test_Each_Number(t *testing.T) {
-	isPositiveValidator := validator.Validator[int](vnumber.IsPositive[int]())
-	validator := Each[int](isPositiveValidator)
+	validator := Each[int](vnumber.IsPositive[int]())
 
 	tests := []struct {
 		name  string
@@ -511,10 +508,9 @@ func Test_NoDuplicates(t *testing.T) {
 
 func Test_ComplexSlice_Validation(t *testing.T) {
 	// Complex validation: slice must have 1-4 items, all strings at least 2 chars, no duplicates
-	minLenValidator := validator.Validator[string](vstring.MinLen(2))
 	validator := Slice("words",
 		InRange[string](1, 4),
-		Each[string](minLenValidator),
+		Each[string](vstring.MinLen(2)),
 		NoDuplicates[string](),
 	)
 

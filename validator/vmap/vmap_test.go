@@ -3,7 +3,6 @@ package vmap
 import (
 	"testing"
 
-	"github.com/mq-gabs/vld/validator"
 	"github.com/mq-gabs/vld/validator/vnumber"
 	"github.com/mq-gabs/vld/validator/vstring"
 )
@@ -454,8 +453,7 @@ func Test_NotHasKeys(t *testing.T) {
 
 func Test_EachValue_String(t *testing.T) {
 	// Wrapper to convert StringValidator to GenericValidator
-	minLenValidator := validator.Validator[string](vstring.MinLen(3))
-	validator := EachValue[string, string](minLenValidator)
+	validator := EachValue[string, string](vstring.MinLen(3))
 
 	tests := []struct {
 		name  string
@@ -501,8 +499,7 @@ func Test_EachValue_String(t *testing.T) {
 
 func Test_EachValue_Number(t *testing.T) {
 	// Wrapper to convert NumberValidator to GenericValidator
-	isPositiveValidator := validator.Validator[int](vnumber.IsPositive[int]())
-	validator := EachValue[string, int](isPositiveValidator)
+	validator := EachValue[string, int](vnumber.IsPositive[int]())
 
 	tests := []struct {
 		name  string
@@ -548,8 +545,7 @@ func Test_EachValue_Number(t *testing.T) {
 
 func Test_EachKey(t *testing.T) {
 	// Wrapper to convert StringValidator to GenericValidator
-	minLenValidator := validator.Validator[string](vstring.MinLen(2))
-	validator := EachKey[string, string](minLenValidator)
+	validator := EachKey[string, string](vstring.MinLen(2))
 
 	tests := []struct {
 		name  string
@@ -591,8 +587,7 @@ func Test_EachKey(t *testing.T) {
 func Test_Each_Alias(t *testing.T) {
 	// Test that Each is an alias for EachValue
 	// Wrapper to convert StringValidator to GenericValidator
-	maxLenValidator := validator.Validator[string](vstring.MaxLen(10))
-	validator := Each[string, string](maxLenValidator)
+	validator := Each[string, string](vstring.MaxLen(10))
 
 	tests := []struct {
 		name  string
@@ -630,11 +625,10 @@ func Test_ComplexMap_Validation(t *testing.T) {
 	// Complex validation: map must have 1-3 items, contain "id" and "name" keys,
 	// and all values must be at least 2 characters
 	// Wrapper to convert StringValidator to GenericValidator
-	minLenValidator := validator.Validator[string](vstring.MinLen(2))
 	validator := Map("user",
 		InRange[string, string](1, 3),
 		HasKeys[string, string]("id", "name"),
-		EachValue[string, string](minLenValidator),
+		EachValue[string, string](vstring.MinLen(2)),
 	)
 
 	tests := []struct {

@@ -10,7 +10,7 @@ import (
 func Test_When_String(t *testing.T) {
 	tests := []struct {
 		name     string
-		validate validator.Validator[string]
+		validate func(string) error
 		input    string
 		valid    bool
 	}{

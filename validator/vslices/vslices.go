@@ -6,7 +6,6 @@ import (
 	"slices"
 
 	"github.com/mq-gabs/vld/internal/utils"
-	"github.com/mq-gabs/vld/validator"
 )
 
 var (
@@ -111,7 +110,7 @@ func InRange[T any](min, max int) SliceValidator[T] {
 }
 
 // Each validates each item in the slice using the provided validator
-func Each[T any](validate validator.Validator[T]) SliceValidator[T] {
+func Each[T any](validate func(T) error) SliceValidator[T] {
 	return func(t []T) error {
 		err := utils.NewErrorGroup(utils.WithSeparator(","))
 		for i, v := range t {
