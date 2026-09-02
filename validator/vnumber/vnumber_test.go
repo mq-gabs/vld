@@ -438,7 +438,7 @@ func Test_IsOdd_Int32(t *testing.T) {
 }
 
 func Test_OneOf_Int(t *testing.T) {
-	validator := NumberOneOf[int](10, 20, 30)
+	validator := OneOf[int](10, 20, 30)
 
 	tests := []struct {
 		name  string
@@ -466,7 +466,7 @@ func Test_OneOf_Int(t *testing.T) {
 }
 
 func Test_OneOf_Float(t *testing.T) {
-	validator := NumberOneOf(1.5, 2.5, 3.5)
+	validator := OneOf(1.5, 2.5, 3.5)
 
 	tests := []struct {
 		name  string

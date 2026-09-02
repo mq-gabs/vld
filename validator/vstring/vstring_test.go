@@ -10,7 +10,7 @@ import (
 
 func Test_String(t *testing.T) {
 	validate := String("name",
-		StringRequired(),
+		Required(),
 		MaxLen(10),
 		MinLen(3),
 	)
@@ -53,7 +53,7 @@ func Test_String(t *testing.T) {
 }
 
 func Test_StringRequired(t *testing.T) {
-	validate := StringRequired()
+	validate := Required()
 
 	tests := []struct {
 		name  string
@@ -844,7 +844,7 @@ func Test_UpperCase(t *testing.T) {
 // Test combining multiple validators
 func Test_StringWithMultipleValidators(t *testing.T) {
 	validator := String("email_field",
-		StringRequired(),
+		Required(),
 		Email(),
 		NoWhitespace(),
 		MaxLen(100),

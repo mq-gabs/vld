@@ -44,8 +44,8 @@ func String(name string, validators ...StringValidator) StringValidator {
 	}
 }
 
-// StringRequired validates empty string
-func StringRequired() StringValidator {
+// Required validates empty string
+func Required() StringValidator {
 	return func(s string) error {
 		if s == "" {
 			return validator.ErrValueIsRequired

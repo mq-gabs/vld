@@ -141,8 +141,8 @@ func IsOdd[T Numeric]() NumberValidator[T] {
 	}
 }
 
-// NumberOneOf validates that the number is one of the allowed values
-func NumberOneOf[T Numeric](allowed ...T) NumberValidator[T] {
+// OneOf validates that the number is one of the allowed values
+func OneOf[T Numeric](allowed ...T) NumberValidator[T] {
 	return func(value T) error {
 		if slices.Contains(allowed, value) {
 			return nil
