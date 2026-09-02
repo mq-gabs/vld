@@ -46,6 +46,10 @@ func (eg *ErrorGroup) Err() error {
 	return errors.Join(eg.errors...)
 }
 
+func (eg *ErrorGroup) Unwrap() []error {
+	return eg.errors
+}
+
 func (eg *ErrorGroup) Error() string {
 	errStrs := make([]string, 0, len(eg.errors))
 
